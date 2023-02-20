@@ -8,7 +8,7 @@ namespace FantasyLogistics.JSON
 {
     public class LayerDefinition
     {
-        public string name;
+        public string name, description;
         public int chunkResolution;
         public Type DataType;
     }
