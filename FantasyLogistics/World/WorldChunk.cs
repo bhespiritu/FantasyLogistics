@@ -8,7 +8,6 @@ namespace FantasyLogistics.World
 {
     public abstract class WorldChunk
     {
-        public static readonly int CHUNK_RESOLUTION = 64;
         
 
 
@@ -16,7 +15,15 @@ namespace FantasyLogistics.World
     }
     public class WorldChunk<T> : WorldChunk
     {
-        private T[] _chunkData = new T[CHUNK_RESOLUTION];
+        public readonly int size;
+
+        public WorldChunk(int size)
+        {
+            this.size = size;
+            _chunkData = new T[size, size];
+        }
+
+        public T[,] _chunkData ;
 
 
 

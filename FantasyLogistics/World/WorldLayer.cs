@@ -19,7 +19,7 @@ namespace FantasyLogistics.World
         public abstract int getChunkResolution();
     }
 
-    public abstract class WorldLayer<T> : WorldLayer
+    public class WorldLayer<T> : WorldLayer
     {
         private IWorldChunkProvider<T> provider;
         private readonly int chunkResolution;
@@ -39,7 +39,20 @@ namespace FantasyLogistics.World
             return provider.RequestChunk(x, y);
         }
 
-        public abstract int 
+        public override int getChunkResolution()
+        {
+            return chunkResolution;
+        }
+
+        public IWorldChunkProvider<T> GetProvider()
+        {
+            return this.provider;
+        }
+
+        public void SetProvider(IWorldChunkProvider<T> provider)
+        {
+            this.provider = provider;
+        }
     }
 
 }

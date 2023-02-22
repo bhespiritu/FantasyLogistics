@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using FantasyLogistics.JSON;
+using FantasyLogistics.Noise;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using SFML.Graphics;
@@ -32,7 +33,10 @@ class Program
         window.Closed += (sender, args) => window.Close();
 
         Image screenImage = new Image(WIDTH, HEIGHT);
-        screenImage.SetPixel(30, 30, Color.Magenta);
+
+        
+
+
 
         Texture t = new Texture(screenImage);
 
