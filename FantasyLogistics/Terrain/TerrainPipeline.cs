@@ -16,7 +16,7 @@ namespace FantasyLogistics.Terrain
 
     public abstract class PipelineStage
     {
-        protected World.World worldReference;
+        public World.World worldReference;
 
         public abstract bool process();
     }

@@ -24,19 +24,26 @@ namespace FantasyLogistics.World
         private IWorldChunkProvider<T> provider;
         private readonly int chunkResolution;
 
+        private Dictionary<Vector2, WorldChunk<T>> cache = new Dictionary<Vector2, WorldChunk<T>>();
+
         public WorldLayer(int chunkResolution)
         {
             this.chunkResolution=chunkResolution;
         }
 
-        public override WorldChunk RequestChunk(Vector2 worldCoords)
+        public override WorldChunk<T> RequestChunk(Vector2 worldCoords)
         {
-            return provider.RequestChunk(worldCoords);
+            if (!cache.ContainsKey(worldCoords))
+            {
+                cache[worldCoords] = provider.RequestChunk(worldCoords);
+            }
+
+            return cache[worldCoords];
         }
 
-        public override WorldChunk RequestChunk(float x, float y)
+        public override WorldChunk<T> RequestChunk(float x, float y)
         {
-            return provider.RequestChunk(x, y);
+            return RequestChunk(new Vector2(x, y));
         }
 
         public override int getChunkResolution()

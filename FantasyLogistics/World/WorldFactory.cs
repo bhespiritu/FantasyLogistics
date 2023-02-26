@@ -12,8 +12,9 @@ namespace FantasyLogistics.World
         {
             World world = new World();
 
-            WorldLayer<float> ground = new WorldLayer<float>(64);
-            ground.SetProvider(new PerlinNoiseChunkProvider(64));
+            WorldLayer<float> ground = new WorldLayer<float>(256);
+            IWorldChunkProvider<float> chunkProvider = new PerlinNoiseChunkProvider(256);
+            ground.SetProvider(chunkProvider);
             world.addWorldLayer(ground);
 
             return world;
