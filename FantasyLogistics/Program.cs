@@ -15,9 +15,9 @@ namespace FantasyLogistics;
 
 class Program
 {
-    const int WIDTH = 512+256;
-    const int HEIGHT = 256;
-    const string TITLE = "SHMUP";
+    const int WIDTH = 256*3;
+    const int HEIGHT = 512;
+    const string TITLE = "Erosion";
 
     
 
@@ -38,6 +38,9 @@ class Program
         Image screenImage = new Image(256, 256);
         Image screenImage2 = new Image(256, 256);
         Image screenImage3 = new Image(256, 256);
+        Image screenImage4 = new Image(256, 256);
+        Image screenImage5 = new Image(256, 256);
+
 
 
         World.World w = WorldFactory.BuildDefaultWorld();
@@ -61,11 +64,35 @@ class Program
                     {
                         byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
                         screenImage.SetPixel(x, y, new Color(lum, lum, lum));
+                        screenImage5.SetPixel(x, y, new Color(lum, lum, lum));
                     }
                     else
                     {
                         byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
                         screenImage.SetPixel(x, y, new Color(0, 0, lum));
+                        screenImage5.SetPixel(x, y, new Color(0, 0, lum));
+                    }
+                }
+            }
+
+            for (uint x = 1; x < 255; x++)
+            {
+                for (uint y = 1; y < 255; y++)
+                {
+                    float layerVal = chunk._chunkData[x, y];
+                    float slope = chunk._chunkData[x, y] - chunk._chunkData[x - 1, y];
+                    
+                    if (layerVal > 0.75f)
+                    {
+                        layerVal += slope*5;
+                        byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
+                        screenImage5.SetPixel(x, y, new Color(lum, lum, lum));
+                    }
+                    else
+                    {
+                        layerVal += slope*5;
+                        byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
+                        screenImage5.SetPixel(x, y, new Color(0, 0, lum));
                     }
                 }
             }
@@ -111,21 +138,65 @@ class Program
                     }
                     if(deltaVal*deltaVal > 0)
                     {
-                        if (layerVal > 0)
+                        if (deltaVal > 0)
                         {
-                            byte lum = (byte)(255 * deltaVal);
+                            byte lum = (byte)(255 * (MathF.Log10(deltaVal)+1));
                             screenImage2.SetPixel(x, y, new Color(0, lum, 0));
                         }
                         else
                         {
-                            byte lum = (byte)(255 * -deltaVal);
+                            byte lum = (byte)(255 * (MathF.Log10(-deltaVal)+1));
                             screenImage2.SetPixel(x, y, new Color(lum, 0, 0));
                         }
                     }
                 }
             }
+
         }
 
+        {
+            WorldLayer<float> layer = (WorldLayer<float>)w.getWorldLayer(0);
+            WorldChunk<float> chunk = layer.RequestChunk(0, 0);
+            for (uint x = 0; x < 256; x++)
+            {
+                for (uint y = 0; y < 256; y++)
+                {
+                    float layerVal = chunk._chunkData[x, y];
+                    if (layerVal > 0.75f)
+                    {
+                        byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
+                        screenImage4.SetPixel(x, y, new Color(lum, lum, lum));
+                    }
+                    else
+                    {
+                        byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
+                        screenImage4.SetPixel(x, y, new Color(0, 0, lum));
+                    }
+                }
+            }
+
+            for (uint x = 1; x < 255; x++)
+            {
+                for (uint y = 1; y < 255; y++)
+                {
+                    float layerVal = chunk._chunkData[x, y];
+                    float slope = chunk._chunkData[x, y] - chunk._chunkData[x - 1, y];
+                    
+                    if (layerVal > 0.75f)
+                    {
+                        layerVal += slope*10;
+                        byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
+                        screenImage4.SetPixel(x, y, new Color(0, lum, 0));
+                    }
+                    else
+                    {
+                        layerVal += slope*10;
+                        byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
+                        screenImage4.SetPixel(x, y, new Color(0, 0, lum));
+                    }
+                }
+            }
+        }
 
 
         Texture t = new Texture(screenImage);
@@ -144,13 +215,27 @@ class Program
 
         background3.Position = new Vector2f(512, 0);
 
+        Texture t4 = new Texture(screenImage4);
+
+        Sprite background4 = new Sprite(t4);
+
+        background4.Position = new Vector2f(512,256);
+
+        Texture t5 = new Texture(screenImage5);
+
+        Sprite background5 = new Sprite(t5);
+
+        background5.Position = new Vector2f(0, 256);
+
         while (window.IsOpen)
         {
             window.DispatchEvents();
-            window.Clear(Color.Blue);
+            window.Clear(Color.Black);
             window.Draw(background);
             window.Draw(background2);
             window.Draw(background3);
+            window.Draw(background4);
+            window.Draw(background5);
             window.Display();
         }
 

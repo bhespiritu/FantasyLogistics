@@ -29,7 +29,7 @@ namespace FantasyLogistics.World
             }
             NoiseLayer noise = new NoiseLayer();
             float max = 0;
-
+            float min = 1;
             for (uint x1 = 0; x1 < size; x1++)
             {
                 for (uint y1 = 0; y1 < size; y1++)
@@ -41,7 +41,8 @@ namespace FantasyLogistics.World
                         value += noiseValFloat;
 
                         value = Math.Max(0, value);
-                        if (value > max) max = value;
+                        max = MathF.Max(value, max);
+                        min = MathF.Min(value, min);
                     }
 
                     output._chunkData[x1,y1] = value;
@@ -53,7 +54,8 @@ namespace FantasyLogistics.World
             {
                 for (uint y1 = 0; y1 < size; y1++)
                 {
-                    output._chunkData[x1, y1] /= max;
+                    output._chunkData[x1, y1] -= min;
+                    output._chunkData[x1, y1] /= (max-min);
 
                 }
             }

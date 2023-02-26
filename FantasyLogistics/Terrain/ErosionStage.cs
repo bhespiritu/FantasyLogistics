@@ -23,8 +23,8 @@ namespace FantasyLogistics.Terrain
             float initialSpeed = 1;
             float sedimentFactor = 4;
             float minSedimentCap = 0.1f;
-            float depositSpeed = .03f;
-            float erodeSpeed = .03f;
+            float depositSpeed = .3f;
+            float erodeSpeed = .3f;
             float gravity = 4;
             float evaporateSpeed = 0.1f;
 
