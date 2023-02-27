@@ -5,11 +5,14 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="ImGui.NET" Version="1.89.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
+		<PackageReference Include="Saffron.Util.ImGuiSFML" Version="1.3.0" />
 		<PackageReference Include="SFML.Net" Version="2.5.0" />
 	</ItemGroup>
 

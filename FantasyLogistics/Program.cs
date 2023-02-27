@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Runtime.InteropServices;
 using FantasyLogistics.JSON;
 using FantasyLogistics.Noise;
 using FantasyLogistics.Terrain;
@@ -10,6 +11,8 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
+using ImGuiNET;
+using Saffron2D.GuiCollection;
 
 namespace FantasyLogistics;
 
@@ -23,6 +26,7 @@ class Program
 
     static void Main(string[] args)
     {
+
         JSchemaGenerator schemaGenerator = new JSchemaGenerator();
 
         JSchema schema = schemaGenerator.Generate(typeof(WorldConfig));
@@ -30,10 +34,13 @@ class Program
 
         VideoMode mode = new VideoMode(WIDTH, HEIGHT);
         RenderWindow window = new RenderWindow(mode, TITLE);
+        GuiImpl.Init(window);
 
         window.SetVerticalSyncEnabled(true);
 
         window.Closed += (sender, args) => window.Close();
+
+
 
         Image screenImage = new Image(256, 256);
         Image screenImage2 = new Image(256, 256);
@@ -184,13 +191,13 @@ class Program
                     
                     if (layerVal > 0.75f)
                     {
-                        layerVal += slope*10;
+                        layerVal += slope*20;
                         byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
                         screenImage4.SetPixel(x, y, new Color(0, lum, 0));
                     }
                     else
                     {
-                        layerVal += slope*10;
+                        layerVal += slope*20;
                         byte lum = (byte)(255 * MathF.Log10(layerVal * 50));
                         screenImage4.SetPixel(x, y, new Color(0, 0, lum));
                     }
@@ -226,7 +233,7 @@ class Program
         Sprite background5 = new Sprite(t5);
 
         background5.Position = new Vector2f(0, 256);
-
+        Clock deltaClock = new Clock();
         while (window.IsOpen)
         {
             window.DispatchEvents();
@@ -236,9 +243,17 @@ class Program
             window.Draw(background3);
             window.Draw(background4);
             window.Draw(background5);
+            GuiImpl.Update(window, deltaClock.Restart());
+
+            ImGui.Begin("hello");
+            ImGui.Button("EFEWF");
+            ImGui.End();
+
+            GuiImpl.Render(window);
             window.Display();
         }
 
         
     }
+
 }
