@@ -12,7 +12,6 @@ using SFML.System;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
 using ImGuiNET;
-using Saffron2D.GuiCollection;
 
 namespace FantasyLogistics;
 
@@ -24,7 +23,7 @@ class Program
 
     
 
-    static void Main(string[] args)
+    static void Main2(string[] args)
     {
 
         JSchemaGenerator schemaGenerator = new JSchemaGenerator();
@@ -34,7 +33,6 @@ class Program
 
         VideoMode mode = new VideoMode(WIDTH, HEIGHT);
         RenderWindow window = new RenderWindow(mode, TITLE);
-        GuiImpl.Init(window);
 
         window.SetVerticalSyncEnabled(true);
 
@@ -243,13 +241,6 @@ class Program
             window.Draw(background3);
             window.Draw(background4);
             window.Draw(background5);
-            GuiImpl.Update(window, deltaClock.Restart());
-
-            ImGui.Begin("hello");
-            ImGui.Button("EFEWF");
-            ImGui.End();
-
-            GuiImpl.Render(window);
             window.Display();
         }
 
