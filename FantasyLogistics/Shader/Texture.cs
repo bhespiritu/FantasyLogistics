@@ -6,7 +6,7 @@ using StbImageSharp;
 
 public class Texture
 {
-    private int Handle;
+    protected int Handle;
     public Texture(int glHandle)
     {
         Handle = glHandle;

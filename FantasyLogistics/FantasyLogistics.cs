@@ -1,4 +1,6 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using FantasyLogistics.Shader;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -52,10 +54,7 @@ namespace FantasyLogistics
 
         private Shader.Shader _shader;
 
-        private SFML.Graphics.Image screenImage;
-
-        // For documentation on this, check Texture.cs.
-        private Texture _texture;
+        private UpdateTexture texture;
 
         public MapWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
@@ -97,11 +96,11 @@ namespace FantasyLogistics
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-            screenImage = new SFML.Graphics.Image(256, 256);
-            screenImage.SetPixel(30,30, Color.Magenta);
+            texture = UpdateTexture.generateNew(Size.X, Size.Y);
+            Console.WriteLine(Size);
+            texture.SetPixel(Color4.Magenta,10, 20);
             
-            _texture = Texture.LoadFromSFMLImage(screenImage);
-            _texture.Use(TextureUnit.Texture0);
+            texture.Use(TextureUnit.Texture0);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -112,7 +111,7 @@ namespace FantasyLogistics
 
             GL.BindVertexArray(_vertexArrayObject);
 
-            _texture.Use(TextureUnit.Texture0);
+            texture.Use(TextureUnit.Texture0);
             _shader.Use();
 
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -133,7 +132,14 @@ namespace FantasyLogistics
             
             if (input.IsKeyDown(Keys.Space))
             {
-                screenImage.SetPixel(31,31,Color.Red);
+                for (int x = 30; x < 35; x++)
+                {
+                    for (int y = 30; y < 31; y++)
+                    {
+                        texture.SetPixel(Color4.Magenta, x,y);
+                    }
+                }
+                texture.Update();
             }
         }
 
