@@ -1,34 +1,40 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using SFML.Graphics;
 
 namespace FantasyLogistics.Shader;
 
 public class UpdateTexture : Texture
 {
-    public uint Width { get; }
-    public uint Height { get; }
+    public int Width { get; }
+    public int Height { get; }
 
-    private float[,,] data;
+    public byte[] data;
 
     public UpdateTexture(int glHandle, int width, int height) : base(glHandle)
     {
-        Width = (uint)width;
-        Height = (uint)height;
-        data = new float[width, height, 4];
+        Width = width;
+        Height = height;
+        data = new byte[width* height* 4];
     }
 
     public void Update()
     {
-        GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0,(int) Width,(int) Height, PixelFormat.Rgba, PixelType.Float, data);
+        GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0,(int) Width,(int) Height, PixelFormat.Rgba, PixelType.UnsignedByte, data);
     }
 
-    public void SetPixel(Color4 val, int x, int y)
+    public void SetPixel(Color val, int x, int y)
     {
-        data[y, x, 0] = val.R;
-        data[y, x, 1] = val.G;
-        data[y, x, 2] = val.B;
-        data[y, x, 3] = val.A;
+        data[I(x, y, 0)] = val.R;
+        data[I(x, y, 1)] = val.G;
+        data[I(x, y, 2)] = val.B;
+        data[I(x, y, 3)] = val.A;
         
+    }
+
+    private int I(int x, int y, int c)
+    {
+        return c + x * 4 + y * Width*4;
     }
 
     public static UpdateTexture generateNew(int width, int height)
@@ -39,8 +45,8 @@ public class UpdateTexture : Texture
         GL.BindTexture(TextureTarget.Texture2D, handle);
         UpdateTexture texture = new UpdateTexture(handle, width, height);
 
-        float[,,] data = texture.data;
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int) width, (int) height, 0, PixelFormat.Rgba, PixelType.Float, data);
+        byte[] data = texture.data;
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, (int) width, (int) height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, data);
         
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);

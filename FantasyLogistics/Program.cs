@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
 using FantasyLogistics.JSON;
 using FantasyLogistics.Noise;
 using FantasyLogistics.Terrain;
@@ -26,6 +27,8 @@ class Program
     static void Main2(string[] args)
     {
 
+        
+        
         JSchemaGenerator schemaGenerator = new JSchemaGenerator();
 
         JSchema schema = schemaGenerator.Generate(typeof(WorldConfig));

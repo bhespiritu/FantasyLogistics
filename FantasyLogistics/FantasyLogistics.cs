@@ -1,10 +1,18 @@
-﻿using FantasyLogistics.Shader;
+﻿using System.Text.RegularExpressions;
+using FantasyLogistics.Render;
+using FantasyLogistics.Shader;
+using FantasyLogistics.Terrain;
+using FantasyLogistics.UI;
+using FantasyLogistics.World;
+using ImGuiNET;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using SFML.Graphics;
+using Buffer = System.Buffer;
+using Image = SFML.Graphics.Image;
 using PrimitiveType = OpenTK.Graphics.OpenGL.PrimitiveType;
 using Texture = FantasyLogistics.Shader.Texture;
 
@@ -15,6 +23,41 @@ namespace FantasyLogistics
     {
         public static void Main(string[] args)
         {
+            // uint height = 21;
+            // uint width = 10;
+            // Image testImage = new Image(width, height);
+            // int i = 0;
+            // for (int x = 0; x < width; x++)
+            // {
+            //     for (int y = 0; y < height; y++)
+            //     {
+            //         float fraction = (float)(i++) / (float)(width * height);
+            //         byte val = (byte)(255 * fraction);
+            //         //Console.WriteLine(i + " f "+ fraction + " " + val);
+            //         testImage.SetPixel((uint)x,(uint)y, new Color(val,val,val,255));
+            //     }
+            // }
+            //
+            // byte[] data = testImage.Pixels;
+            // //Console.WriteLine(Convert.ToHexString(data));
+            //
+            // String hex = Convert.ToHexString(data);
+            // Console.WriteLine(data.Length);
+            // Console.WriteLine(SpliceText(hex, (int)width*4));
+            //
+            //
+            // for (int x = 0; x < width; x++)
+            // {
+            //     for (int y = 0; x < height; x++)
+            //     {
+            //         for (int c = 0; c < 4; c++)
+            //         {
+            //             int index = c + x * 4 + y * (int)width;
+            //            // Console.WriteLine(x + " " + y + " " + c + " " + data[index]);
+            //         }
+            //     }
+            // }
+            
             GameWindowSettings gameWindowSettings = GameWindowSettings.Default;
             NativeWindowSettings nativeWindowSettings = NativeWindowSettings.Default;
             
@@ -23,7 +66,10 @@ namespace FantasyLogistics
                 window.Run();
             }
         }
-
+        
+        public static string SpliceText(string text, int lineLength) {
+            return Regex.Replace(text, "(.{" + lineLength + "})", "$1" + Environment.NewLine);
+        } 
     }
     
     public class MapWindow : GameWindow
@@ -54,16 +100,36 @@ namespace FantasyLogistics
 
         private Shader.Shader _shader;
 
-        private UpdateTexture texture;
+        public UpdateTexture texture;
+
+        private ImGuiController _controller;
+
+        private DebugMenu _debugMenu;
+
+        public ChunkRenderer<float> chunkRenderer;
+        private WorldChunk<float> chunk;
 
         public MapWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
+            chunkRenderer = new DefaultFlatColorChunkRenderer();
+            _debugMenu = new DebugMenu(this);
+            
+            World.World w = WorldFactory.BuildDefaultWorld();
+
+            ErosionStage stage = new ErosionStage();
+            stage.worldReference = w;
+
+            stage.process();
+            
+            chunk = ((WorldLayer<float>) w.getWorldLayer(0)).RequestChunk(0, 0);
         }
 
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -96,9 +162,22 @@ namespace FantasyLogistics
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-            texture = UpdateTexture.generateNew(Size.X, Size.Y);
-            Console.WriteLine(Size);
-            texture.SetPixel(Color4.Magenta,10, 20);
+            
+            
+
+            
+            
+            texture = UpdateTexture.generateNew(chunk.size, chunk.size);
+
+            
+            updateTexture();
+        }
+
+        public void updateTexture()
+        {
+            byte[] colors = chunkRenderer.renderChunk(chunk);
+
+            texture.data = colors;
             
             texture.Use(TextureUnit.Texture0);
         }
@@ -116,6 +195,14 @@ namespace FantasyLogistics
 
             GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
 
+            _controller.Update(this, (float)e.Time);
+            
+            _debugMenu.RenderMenu();
+
+            _controller.Render();
+
+            ImGuiController.CheckGLError("End of frame");
+            
             SwapBuffers();
         }
 
@@ -134,9 +221,9 @@ namespace FantasyLogistics
             {
                 for (int x = 30; x < 35; x++)
                 {
-                    for (int y = 30; y < 31; y++)
+                    for (int y = 30; y < 35; y++)
                     {
-                        texture.SetPixel(Color4.Magenta, x,y);
+                        texture.SetPixel(Color.Magenta, x,y);
                     }
                 }
                 texture.Update();
@@ -148,6 +235,23 @@ namespace FantasyLogistics
             base.OnResize(e);
 
             GL.Viewport(0, 0, Size.X, Size.Y);
+            
+            _controller.WindowResized(ClientSize.X, ClientSize.Y);
+        }
+        
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            base.OnTextInput(e);
+            
+            
+            _controller.PressChar((char)e.Unicode);
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+            
+            _controller.MouseScroll(e.Offset);
         }
     }
 }
