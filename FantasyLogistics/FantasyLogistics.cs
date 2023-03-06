@@ -107,22 +107,21 @@ namespace FantasyLogistics
         private DebugMenu _debugMenu;
 
         public ChunkRenderer<float> chunkRenderer;
-        private WorldChunk<float> chunk;
+        public WorldChunk<float> chunk;
+
+        public World.World world;
 
         public MapWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
             chunkRenderer = new DefaultFlatColorChunkRenderer();
+            
+            
+            world = WorldFactory.BuildDefaultWorld();
+
+            updateNoise();
+            
             _debugMenu = new DebugMenu(this);
-            
-            World.World w = WorldFactory.BuildDefaultWorld();
-
-            ErosionStage stage = new ErosionStage();
-            stage.worldReference = w;
-
-            stage.process();
-            
-            chunk = ((WorldLayer<float>) w.getWorldLayer(0)).RequestChunk(0, 0);
         }
 
         protected override void OnLoad()
@@ -169,7 +168,8 @@ namespace FantasyLogistics
             
             texture = UpdateTexture.generateNew(chunk.size, chunk.size);
 
-            
+            updateNoise();
+            doErosion();
             updateTexture();
         }
 
@@ -180,6 +180,19 @@ namespace FantasyLogistics
             texture.data = colors;
             
             texture.Use(TextureUnit.Texture0);
+        }
+        
+        public void updateNoise()
+        {
+            chunk = ((WorldLayer<float>) world.getWorldLayer(0)).RequestChunk(0, 0, true);
+        }
+        
+        public void doErosion()
+        {
+            ErosionStage stage = new ErosionStage();
+            stage.worldReference = world;
+
+            stage.process();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)

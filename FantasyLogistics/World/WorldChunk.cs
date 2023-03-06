@@ -9,9 +9,6 @@ namespace FantasyLogistics.World
     public abstract class WorldChunk
     {
         
-
-
-
     }
     public class WorldChunk<T> : WorldChunk
     {

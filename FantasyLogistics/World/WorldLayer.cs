@@ -12,9 +12,9 @@ namespace FantasyLogistics.World
     public abstract class WorldLayer
     {
 
-        public abstract WorldChunk RequestChunk(Vector2 worldCoords);
+        public abstract WorldChunk RequestChunk(Vector2 worldCoords, bool regenerate = false);
 
-        public abstract WorldChunk RequestChunk(float x, float y);
+        public abstract WorldChunk RequestChunk(float x, float y, bool regenerate = false);
 
         public abstract int getChunkResolution();
     }
@@ -30,10 +30,11 @@ namespace FantasyLogistics.World
         {
             this.chunkResolution=chunkResolution;
         }
+        
 
-        public override WorldChunk<T> RequestChunk(Vector2 worldCoords)
+        public override WorldChunk<T> RequestChunk(Vector2 worldCoords, bool regenerate = false)
         {
-            if (!cache.ContainsKey(worldCoords))
+            if (!cache.ContainsKey(worldCoords) || regenerate)
             {
                 cache[worldCoords] = provider.RequestChunk(worldCoords);
             }
@@ -41,9 +42,9 @@ namespace FantasyLogistics.World
             return cache[worldCoords];
         }
 
-        public override WorldChunk<T> RequestChunk(float x, float y)
+        public override WorldChunk<T> RequestChunk(float x, float y, bool regenerate = false)
         {
-            return RequestChunk(new Vector2(x, y));
+            return RequestChunk(new Vector2(x, y),regenerate);
         }
 
         public override int getChunkResolution()

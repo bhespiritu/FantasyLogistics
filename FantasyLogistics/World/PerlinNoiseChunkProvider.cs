@@ -8,26 +8,28 @@ using FantasyLogistics.Noise;
 
 namespace FantasyLogistics.World
 {
-    internal class PerlinNoiseChunkProvider : IWorldChunkProvider<float>
+    public class PerlinNoiseChunkProvider : IWorldChunkProvider<float>
     {
         private readonly int size;
+
+        public List<NoiseLayer> noiseLayers;
 
         public PerlinNoiseChunkProvider(int size)
         {
             this.size = size;
+            noiseLayers = new List<NoiseLayer>();
+            noiseLayers.Add(new NoiseLayer(0, 0, 0.75f, 0.5f));
+            for (int i = 2; i <= 4; i++)
+            {
+                noiseLayers.Add(new NoiseLayer(0, 0, (float)Math.Pow(0.5, i), (float)Math.Pow(1.75, i)));
+            }
         }
 
         public WorldChunk<float> RequestChunk(float x, float y)
         {
             WorldChunk<float> output = new WorldChunk<float>(size);
 
-            List<NoiseLayer> noiseLayers = new List<NoiseLayer>();
-            noiseLayers.Add(new NoiseLayer(0, 0, 0.75f, 0.5f));
-            for (int i = 2; i <= 4; i++)
-            {
-                noiseLayers.Add(new NoiseLayer(0, 0, (float)Math.Pow(0.5, i), (float)Math.Pow(1.75, i)));
-            }
-            NoiseLayer noise = new NoiseLayer();
+            
             float max = 0;
             float min = 1;
             for (uint x1 = 0; x1 < size; x1++)

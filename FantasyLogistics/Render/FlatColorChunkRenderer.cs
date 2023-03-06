@@ -87,7 +87,7 @@ public class FlatColorChunkRendererDebugUI : ChunkRendererDebugUI<FlatColorChunk
         for (int i = 0; i < settings.Count; i++)
         {
                 ImGui.Separator();
-                ImGui.DragFloat("Threshold " + i, ref listSpan[i].threshold, 0.01f, 0, 1);
+                ImGui.DragFloat("Threshold " + i, ref listSpan[i].threshold, 0.001f, 0, 1);
                 ImGui.ColorEdit3("Color " + i, ref listSpan[i].color);
                 if(ImGui.Button("Remove " + i))
                 {
@@ -113,13 +113,16 @@ public class FlatColorChunkRendererDebugUI : ChunkRendererDebugUI<FlatColorChunk
         target.ranges.Clear();
         foreach (ColorSetting setting in settings)
         {
-            Color c = new Color();
-            c.R = (byte)(255 * setting.color.X);
-            c.G = (byte)(255 * setting.color.Y);
-            c.B = (byte)(255 * setting.color.Z);
-            c.A = 255;
-            
-            target.ranges.Add(setting.threshold,c);
+            if(!target.ranges.ContainsKey(setting.threshold))
+            {
+                Color c = new Color();
+                c.R = (byte)(255 * setting.color.X);
+                c.G = (byte)(255 * setting.color.Y);
+                c.B = (byte)(255 * setting.color.Z);
+                c.A = 255;
+
+                target.ranges.Add(setting.threshold, c);
+            }
         }
     }
 
