@@ -10,6 +10,8 @@ namespace FantasyLogistics.World
 {
     public class World
     {
+        public WorldInfo worldInfo;
+        
         private List<WorldLayer> layers;
         private Dictionary<String, WeakReference<WorldLayer>> labels;
 
@@ -48,5 +50,12 @@ namespace FantasyLogistics.World
             layers.RemoveAt(i);
         }
 
+    }
+
+    public struct WorldInfo
+    {
+        public readonly string version;
+        public string name;
+        public int sizeX, sizeY;
     }
 }
