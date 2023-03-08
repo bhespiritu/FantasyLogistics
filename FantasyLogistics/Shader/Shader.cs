@@ -1,5 +1,6 @@
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
+using System.IO;
 
 namespace FantasyLogistics.Shader;
 
@@ -23,7 +24,7 @@ namespace FantasyLogistics.Shader;
             //   The fragment shader is what we'll be using the most here.
 
             // Load vertex shader and compile
-            var shaderSource = File.ReadAllText(vertPath);
+            var shaderSource = System.IO.File.ReadAllText(vertPath);
 
             // GL.CreateShader will create an empty shader (obviously). The ShaderType enum denotes which type of shader will be created.
             var vertexShader = GL.CreateShader(ShaderType.VertexShader);
@@ -35,7 +36,7 @@ namespace FantasyLogistics.Shader;
             CompileShader(vertexShader);
 
             // We do the same for the fragment shader.
-            shaderSource = File.ReadAllText(fragPath);
+            shaderSource = System.IO.File.ReadAllText(fragPath);
             var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentShader, shaderSource);
             CompileShader(fragmentShader);
