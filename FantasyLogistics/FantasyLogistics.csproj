@@ -28,6 +28,10 @@
 	  </None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Schema\DefaultSchemas" />
+	</ItemGroup>
+
 	<ProjectExtensions><VisualStudio><UserProperties json_4defaultworld_1json__JsonSchema="https://json-schema.org/draft/2020-12/schema" /></VisualStudio></ProjectExtensions>
 
 </Project>
